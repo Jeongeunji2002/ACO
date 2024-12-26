@@ -1,0 +1,45 @@
+/* src/pages/member/Login.module.css */
+
+.container {
+    text-align: center;
+    padding: 20px;
+}
+
+.form {
+    display: inline-block;
+    text-align: left;
+}
+
+.inputGroup {
+    margin-bottom: 10px;
+}
+
+.inputGroup label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.inputGroup input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.button {
+    background-color: #2db400;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #238a00;
+}
