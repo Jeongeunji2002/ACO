@@ -1,0 +1,140 @@
+plugins {
+	id 'java'
+	id 'war'
+	id 'org.springframework.boot' version '3.4.0'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'org.myweb'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	//스프링 부트 시큐리티 관련 기본 설정과 의존성 기능 제공
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	//데이터의 유효성 검사용 어노테이션 제공
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	//스프링 부트 웹 관련련 기본 설정과 의존성 기능 제공, Restful 관련 어노테이션 제공
+
+	//oracle db 와 jpa 연결 설정
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	//스프링과 연동되는 jpa 기술 관련 의존성 기능 제공
+	runtimeOnly 'com.oracle.database.jdbc:ojdbc8'
+	//오라클 데이터베이스와 연동하기 위한 의존성 기능 제공
+
+	//jwt
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'    //JWT 를 생성하고 검증하기 위한 라이브러리임
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'   //JWT 구현체를 런타임시 의존성 추가하는 라이브러리임
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'  //JSON 처리를 위한 Jackson과 연동되는  JJWT 의존성을 런타임시 추가함
+
+	// querydsl
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+	compileOnly 'org.projectlombok:lombok'
+	//롬복 기능을 어노테이션 방식으로 처리하는 라이브러리임
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	//개발시 유용한 도구(예: 자동 리스타터)를 제공하는 라이브러리임
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	//스프링 부트의 설정과 관련된 어노테이션과 기능을 제공하는 라이브러리
+	annotationProcessor 'org.projectlombok:lombok'
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	//스프링 부트에 내장된 톰켓 라이브러리, 웹 에플리케이션 구동을 위한 라이브러리임
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	//테스트를 위한 라이브러리임. 테스트 코드 작성시 이용됨, 테스트 코드는 서버 구동없이 실행함
+	testImplementation 'org.springframework.security:spring-security-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+/* React auto build */
+tasks.named('bootBuildImage') {
+	builder = 'paketobuildpacks/builder-jammy-base:latest'
+}
+
+tasks.register('npmInstall', Exec) {
+	// workingDir = file("${projectDir}/src/main/frontend")
+	workingDir = file("D:/react_workspace/first-front")
+	commandLine 'cmd', '/c', 'npm', 'install'
+}
+
+tasks.register('npmBuild', Exec) {
+	dependsOn npmInstall
+	workingDir = file("D:/react_workspace/first-front")
+	commandLine 'cmd', '/c', 'npm', 'run', 'build'
+}
+
+tasks.register('copyReactBuild', Copy) {
+	dependsOn npmBuild
+	from("D:/react_workspace/first-front/build")
+	into("D:/springboot_workspace/first_serverside/src/main/resources/static")
+}
+
+// 명시적으로 의존성 추가
+tasks.named('processResources') {
+	mustRunAfter(copyReactBuild)
+}
+
+bootJar {
+	dependsOn copyReactBuild
+	from("D:/springboot_workspace/first_serverside/src/main/resources/static") {
+		into 'BOOT-INF/classes/static'
+	}
+}
+
+//sourceSets
+//gradle build 시 QClass 소스도 함께 build 하기 위해서 sourceSets 에 해당 위치를 추가해준다.
+def querydslSrcDir = 'src/main/generated'
+sourceSets {
+	main {
+		java {
+			srcDirs += [ querydslSrcDir ]
+		}
+	}
+}
+
+//해당 내용을 명시해주지 않으면 Q 파일 내 Generated 를 import 할 때
+// 자바 9 에만 있는 import javax.annotation.processing.Generated 로 import 해준다.
+//그렇기 때문에 다른 버전에서도 사용할 수 있도록 java.annotation.Generated 로 import 하도록 설정하는 코드
+compileJava {
+	options.compilerArgs << '-Aquerydsl.generatedAnnotationClass=javax.annotation.Generated'
+}
+
+//annotationProcessorGeneratedSourcesDirectory 를 사용할 수도 있는데,
+//Gradle 공식 문서에 해당 기능은 deprecated 되었고, 추후 major version 에선 삭제할 것이라고 소개하고 있기 때문에
+// generatedSourceOutputDirectory 를 사용한다.
+//generatedSourceOutputDirectory 는 annotation processors 에서 생성한 소스 파일을 저장할 디렉토리를 지정 해준다.
+// (Gradle 공식문서 → CompileOptions - Gradle DSL Version 7.5.1 )
+//이 코드를 통해 위에서 선언한 querydslSrcDir 변수의 src/main/generated 에다가 annotation processors 가 만든 QClass 들을 저장해준다.
+tasks.withType(JavaCompile) {
+	options.generatedSourceOutputDirectory = file(querydslSrcDir)
+}
+
+//build clean 시에 생성되었던 QClass 를 모두 삭제 (querydslSrcDir = src/main/generated)
+//만들어진 QClass 삭제하기 : Gradle > build > clean
+//QClass 만들기 : Gradle > build > compileJava
+//src > main > generated 내에 Q 클래스가 만들어졌으면 queryDSL 설정이 정상적으로 된 것이다
+clean {
+	delete file(querydslSrcDir)
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

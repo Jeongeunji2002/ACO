@@ -123,28 +123,27 @@ function Header({ updateBoardResults, updateNoticeResults, resetSearchInput }) {
         <Link to="/" className={styles.logoLink}>
           <img src={logo} alt="Site Logo" className={styles.logo} />
         </Link>
-        <nav>
-          <ul className={styles.navList}>
-            <li><Link to="/" className={styles.navItem}>홈</Link></li>
-            <li><Link to="/notice" className={styles.navItem}>공지사항</Link></li>
-            <li><Link to="/board" className={styles.navItem}>게시판</Link></li>
-          </ul>
-        </nav>
+        <table>
+          <thead className={styles.searchBar}>
+            <tr>
+              <td colSpan="25"><input  type="text" placeholder={getSearchPlaceholder()} value={searchTerm} className={styles.searchInput} onChange={(e) => setSearchTerm(e.target.value)}/></td>
+              <td>
+                <button className={styles.searchButton} onClick={handleSearch}>검색</button>
+              </td>
+              <td>
+                <button className={styles.searchButton} onClick={handleResetSearch}>초기화</button>
+              </td>
+            </tr>
+           </thead>
+            <tbody>
+            <tr>
+              <td colSpan="10"><Link to="/" className={styles.navItem}>홈</Link></td>
+              <td colSpan="10"><Link to="/chat" className={styles.navItem}>채팅</Link></td>
+              <td colSpan="10"><Link to="/board" className={styles.navItem}>게시판</Link></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
-      {/* 검색바 */}
-      <div className={styles.searchBar}>
-        <input
-          type="text"
-          placeholder={getSearchPlaceholder()}
-          value={searchTerm}
-          className={styles.searchInput}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button className={styles.searchButton} onClick={handleSearch}>검색</button>
-        <button className={styles.searchButton} onClick={handleResetSearch}>초기화</button>
-      </div>
-
       {/* 로그인/로그아웃 버튼 */}
       <div className={styles.rightSection}>
         {isLoggedIn ? (
@@ -186,3 +185,27 @@ function Header({ updateBoardResults, updateNoticeResults, resetSearchInput }) {
 }
 
 export default Header;
+
+// function Header() {
+//   const { isLoggedIn, logout } = useContext(AuthContext);
+
+//   return (
+//     <header className={styles.header}>
+//       <h1 className={styles.title}>NEXT AI</h1>
+//       <input type="text" className={styles.searchInput} placeholder="검색한 학문을 입력해 주세요..." />
+//       <nav className={styles.navigation}>
+//         <Link to="/" className={styles.navLink}>홈</Link>
+//         {isLoggedIn ? (
+//           <>
+//             <Link to="/profile" className={styles.navLink}>프로필</Link>
+//             <button onClick={logout} className={styles.logoutButton}>로그아웃</button>
+//           </>
+//         ) : (
+//           <Link to="/login" className={styles.navLink}>로그인</Link>
+//         )}
+//       </nav>
+//     </header>
+//   );
+// }
+
+// export default Header;
