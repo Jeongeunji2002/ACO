@@ -1,0 +1,60 @@
+/* src/Chat.css */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 100px); /* 헤더 높이를 제외한 전체 높이 */
+    padding: 20px;
+}
+
+.chat-window {
+    flex: 1;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    background-color: #fff;
+}
+
+.chat-message {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 15px;
+    position: relative;
+}
+
+.chat-message:nth-child(odd) {
+    background-color: #e0f7fa; /* 왼쪽 메시지 배경 */
+    align-self: flex-start;
+}
+
+.chat-message:nth-child(even) {
+    background-color: #c8e6c9; /* 오른쪽 메시지 배경 */
+    align-self: flex-end;
+}
+
+.input-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin-right: 10px;
+}
+
+.send-button {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.send-button:hover {
+    background-color: #0056b3;
+}

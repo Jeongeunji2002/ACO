@@ -1,0 +1,48 @@
+/* src/App.css */
+.App {
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa; /* 기본 배경색 */
+  height: 100vh; /* 전체 화면 높이 */
+  display: flex;
+  flex-direction: column;
+}
+
+.main-container {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 100px); /* 헤더 높이를 제외한 전체 높이 */
+  position: relative; /* 버튼을 절대 위치로 설정하기 위해 상대 위치로 설정 */
+}
+
+.chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative; /* 절대 위치 요소를 포함하기 위해 설정 */
+}
+
+.toggle-button {
+  position: absolute;
+  left: 1px; /* 왼쪽에서 10px 떨어진 위치 */
+  top: 50%; /* 수직 중앙에 위치 */
+  transform: translateY(-50%); /* 수직 중앙 정렬 */
+  width: 30px; /* 정사각형 버튼 너비 */
+  height: 30px; /* 정사각형 버튼 높이 */
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 20px; /* 텍스트 크기 조정 */
+  z-index: 10; /* 버튼이 다른 요소 위에 오도록 z-index 설정 */
+  transition: background-color 0.3s; /* 배경색 변화 애니메이션 */
+}
+
+.toggle-button:hover {
+  background-color: #0056b3;
+}
+
+.toggle-button.closed {
+  transform: rotate(360deg); /* 닫힐 때 버튼 모양 회전 */
+}

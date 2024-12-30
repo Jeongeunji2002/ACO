@@ -1,0 +1,36 @@
+/* src/Header.css */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #c9c9c9;
+    color: rgb(152, 151, 241);
+    padding: 15px 20px;
+    border-radius: 0 0 15px 15px;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    width: 35%; /* 로고 크기 조정 */
+    height: auto;
+    margin-right: 10px; /* 로고와 제목 사이의 간격 */
+}
+
+.header-title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.header-nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+.header-nav a:hover {
+    text-decoration: underline;
+}
